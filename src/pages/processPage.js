@@ -172,8 +172,9 @@ function ProcessPage() {
               onChange={handleScenarioChange}
             />
           </div>
-          <div className="text-xl font-bold text-white mb-6">Parameters</div>
-
+          <div className="flex justify-center items-center">
+            <div className="text-xl font-bold text-white mb-6 ">Parameters</div>
+          </div>
           {parameters.map((parameter, index) => (
             <div key={index} className="flex items-center mb-4">
               <div key={index} className="flex items-center justify-center">
