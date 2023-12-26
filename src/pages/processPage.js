@@ -11,6 +11,11 @@ function ProcessPage() {
   const [body, setBody] = useState("");
   const [token, setToken] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [videoUrl, setVideUrl] = useState("");
+
+  const handleVideoUrl = (v) => {
+    setVideUrl(v);
+  };
 
   const handleOpenPopup = () => {
     setShowPopup(true);
@@ -53,21 +58,45 @@ function ProcessPage() {
     setAssertionText(e.target.value);
   };
 
-  const injectVideo = (videoUrl) => {
-    const videoContainer = document.createElement("div");
-    videoContainer.innerHTML = `<video src=${videoUrl} controls></video>`;
-    videoContainer.style.position = "fixed";
-    videoContainer.style.zIndex = "1000";
-    videoContainer.style.top = "10px";
-    videoContainer.style.right = "10px";
-    document.body.appendChild(videoContainer);
-  };
-
   useEffect(() => {
     if (url != "" && body != "") {
       sendStartSignal(scenario, parameters, assertionText, token);
     }
   }, [url, body]);
+
+  useEffect(() => {
+    if (videoUrl != "") {
+      expandVideo();
+    }
+  }, [videoUrl]);
+
+  const expandVideo = () => {
+    const prevState = document.body.innerHTML;
+    document.body.innerHTML = "";
+    document.getElementsByTagName("HTML")[0].style.width = "1200px";
+    document.getElementsByTagName("HTML")[0].style.heigth = "675px";
+    const videoContainer = document.createElement("div");
+    videoContainer.innerHTML =
+      '<center><video width="97%" height="95%" controls><source src="https://storage.googleapis.com/ai-automation-framework.appspot.com/91e7ac54-a3ec-11ee-8ff3-5e542eed4ef0/record.webm" type="video/webm">Your browser does not support the video tag.</video></center>';
+    videoContainer.style.position = "fixed";
+    videoContainer.style.zIndex = "10000";
+    videoContainer.style.top = "0px";
+    videoContainer.style.left = "0px";
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Close";
+    closeButton.style.position = "absolute";
+    closeButton.style.top = "4px";
+    closeButton.style.right = "4px";
+    closeButton.onclick = () => {
+      videoContainer.remove();
+      document.getElementsByTagName("HTML")[0].style.width = "420px";
+      document.body.innerHTML = prevState;
+    };
+
+    videoContainer.appendChild(closeButton);
+    document.body.appendChild(videoContainer);
+  };
 
   function getInfo() {
     /* eslint-disable no-undef */
@@ -93,11 +122,14 @@ function ProcessPage() {
     return document.body.innerHTML;
   }
 
+  var intervalId = null;
+
   async function sendStartSignal(scenario, parames, assertion, token) {
     let params = "";
     parames.forEach((element) => {
-      params += element.key + " " + element.value + " ";
+      params += element.key + " " + element.value + " ,";
     });
+    params[params.length - 1] = "";
 
     const data = {
       url: url,
@@ -123,16 +155,40 @@ function ProcessPage() {
       })
       .then((result) => {
         handleClosePopup();
-        alert("Status: " + result.status + "\n" + "Run ID: " + result.runId);
+        // status sorgusu
+        intervalId = setInterval(getStatus(result), 1000);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   }
 
+  async function getStatus(result) {
+    var formdata = new FormData();
+    formdata.append("runId", result.runId);
+
+    var requestOptions = {
+      method: "GET",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch(
+      `http://127.0.0.1:105/controller/status?token=${token}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status == 1) {
+          setVideUrl(result.video);
+          clearInterval(intervalId);
+        }
+      })
+      .catch((error) => console.log("error", error));
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // alert("Please wait...");
     if (isChecked) {
       var myHeaders = new Headers();
       myHeaders.append("Authorization", "Basic dXNlcm5hbWU6cGFzc3dvcmQ=");
@@ -148,6 +204,7 @@ function ProcessPage() {
           const data = await token.json();
           setToken(data.token);
           handleOpenPopup();
+
           getInfo();
         })
         .catch((error) => {
