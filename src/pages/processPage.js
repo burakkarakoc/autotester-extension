@@ -10,7 +10,6 @@ function ProcessPage() {
   const [url, setUrl] = useState("");
   const [body, setBody] = useState("");
   const [token, setToken] = useState("");
-
   const [showPopup, setShowPopup] = useState(false);
 
   const handleOpenPopup = () => {
@@ -84,7 +83,12 @@ function ProcessPage() {
     return document.body.innerHTML;
   }
 
-  async function sendStartSignal(scenario, params, assertion, token) {
+  async function sendStartSignal(scenario, parames, assertion, token) {
+    let params = "";
+    parames.forEach((element) => {
+      params += element.key + " " + element.value + " ";
+    });
+
     const data = {
       url: url,
       scenario: scenario,
