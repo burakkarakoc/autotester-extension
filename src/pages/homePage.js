@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "../components/header.js";
+import Header from "../components/homepage/header.js";
 import RequestDemoForm from "../components/forms/requestDemo.js";
-import About from "../components/about.js";
+import About from "../components/homepage/about.js";
 
 export default function HomePage() {
   return (

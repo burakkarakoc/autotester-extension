@@ -1,5 +1,5 @@
 import React from "react";
-import StartButton from "./buttons/startButton";
+import StartButton from "../buttons/startButton";
 
 function Header() {
   return (

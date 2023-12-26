@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import PopupComponent from "../components/waitingPopup";
+import PopupComponent from "../components/processpage/waitingPopup";
 
 function ProcessPage() {
   const [parameters, setParameters] = useState([{ key: "", value: "" }]);
@@ -51,6 +51,16 @@ function ProcessPage() {
 
   const handleAssertionTextChange = (e) => {
     setAssertionText(e.target.value);
+  };
+
+  const injectVideo = (videoUrl) => {
+    const videoContainer = document.createElement("div");
+    videoContainer.innerHTML = `<video src=${videoUrl} controls></video>`;
+    videoContainer.style.position = "fixed";
+    videoContainer.style.zIndex = "1000";
+    videoContainer.style.top = "10px";
+    videoContainer.style.right = "10px";
+    document.body.appendChild(videoContainer);
   };
 
   useEffect(() => {
