@@ -156,7 +156,7 @@ function ProcessPage() {
       .then((result) => {
         handleClosePopup();
         // status sorgusu
-        intervalId = setInterval(getStatus(result), 1000);
+        intervalId = setInterval(getStatus(result), 4000);
       })
       .catch((error) => {
         console.error("Error:", error);
