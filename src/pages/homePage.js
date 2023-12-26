@@ -5,7 +5,7 @@ import About from "../components/homepage/about.js";
 
 export default function HomePage() {
   return (
-    <div className="App bg-gray-800 min-h-screen text-gray-300">
+    <div className="App bg-gray-800 text-gray-300">
       <Header />
       <About />
       <RequestDemoForm />

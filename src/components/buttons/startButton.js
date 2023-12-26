@@ -17,56 +17,45 @@ function StartButton() {
 
   useEffect(() => {
     if (videoUrl != "") {
-      injectVideo();
+      expandVideo();
     }
   }, [videoUrl]);
 
-  const injectVideo = () => {
-    /* eslint-disable no-undef */
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const activeTabId = tabs[0].id;
-      // const activeTabUrl = tabs[0].url;
-      console.log("inside chrome " + activeTabId);
-      chrome.scripting.executeScript(
-        {
-          target: { tabId: activeTabId },
-          function: () => {
-            const videoContainer = document.createElement("div");
+  const expandVideo = () => {
+    const prevState = document.body.innerHTML;
+    document.body.innerHTML = "";
 
-            // videoContainer.innerHTML = `<video src=${videoUrl} controls></video>`;
-            // videoContainer.innerHTML =
-            // '<video width="400" controls><source src="mov_bbb.mp4" type="video/mp4">Your browser does not support HTML video.</video>';
-            videoContainer.innerHTML =
-              '<video width="840" height="472" controls><source src="https://storage.googleapis.com/ai-automation-framework.appspot.com/3351e99e-9f59-11ee-9769-5e542eed4ef0/b924a4e5fa86841bea72adcb49e98588.webm" type="video/webm">Your browser does not support the video tag.</video>';
-            videoContainer.style.position = "fixed";
-            videoContainer.style.zIndex = "1000";
-            videoContainer.style.top = "10px";
-            videoContainer.style.left = "10px";
+    document.getElementsByTagName("HTML")[0].style.width = "1200px";
+    document.getElementsByTagName("HTML")[0].style.heigth = "675px";
 
-            // Create close button
-            const closeButton = document.createElement("button");
-            closeButton.textContent = "Close";
-            closeButton.style.position = "absolute";
-            closeButton.style.top = "0";
-            closeButton.style.right = "0";
-            closeButton.onclick = () => {
-              videoContainer.remove();
-            };
+    const videoContainer = document.createElement("div");
 
-            // Append close button to video container
-            videoContainer.appendChild(closeButton);
+    // videoContainer.innerHTML = `<video src=${videoUrl} controls></video>`;
+    // videoContainer.innerHTML =
+    // '<video width="400" controls><source src="mov_bbb.mp4" type="video/mp4">Your browser does not support HTML video.</video>';
+    videoContainer.innerHTML =
+      '<center><video width="97%" height="95%" controls><source src="https://storage.googleapis.com/ai-automation-framework.appspot.com/91e7ac54-a3ec-11ee-8ff3-5e542eed4ef0/record.webm" type="video/webm">Your browser does not support the video tag.</video></center>';
+    videoContainer.style.position = "fixed";
+    videoContainer.style.zIndex = "10000";
+    videoContainer.style.top = "0px";
+    videoContainer.style.left = "0px";
 
-            document.body.appendChild(videoContainer);
-          },
-        },
-        (results) => {
-          // if (results && results[0]) {
-          //   setUrl(activeTabUrl);
-          //   setBody(results[0].result);
-          // }
-        }
-      );
-    });
+    // Create close button
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Close";
+    closeButton.style.position = "absolute";
+    closeButton.style.top = "4px";
+    closeButton.style.right = "4px";
+    closeButton.onclick = () => {
+      videoContainer.remove();
+      document.getElementsByTagName("HTML")[0].style.width = "420px";
+      document.body.innerHTML = prevState;
+    };
+
+    // Append close button to video container
+    videoContainer.appendChild(closeButton);
+
+    document.body.appendChild(videoContainer);
   };
 
   return (
