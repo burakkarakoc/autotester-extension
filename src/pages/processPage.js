@@ -13,10 +13,6 @@ function ProcessPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [videoUrl, setVideUrl] = useState("");
 
-  const handleVideoUrl = (v) => {
-    setVideUrl(v);
-  };
-
   const handleOpenPopup = () => {
     setShowPopup(true);
   };
@@ -59,13 +55,13 @@ function ProcessPage() {
   };
 
   useEffect(() => {
-    if (url != "" && body != "") {
+    if (url !== "" && body !== "") {
       sendStartSignal(scenario, parameters, assertionText, token);
     }
   }, [url, body]);
 
   useEffect(() => {
-    if (videoUrl != "") {
+    if (videoUrl !== "") {
       expandVideo();
     }
   }, [videoUrl]);
@@ -77,7 +73,9 @@ function ProcessPage() {
     document.getElementsByTagName("HTML")[0].style.heigth = "675px";
     const videoContainer = document.createElement("div");
     videoContainer.innerHTML =
-      '<center><video width="97%" height="95%" controls><source src="https://storage.googleapis.com/ai-automation-framework.appspot.com/91e7ac54-a3ec-11ee-8ff3-5e542eed4ef0/record.webm" type="video/webm">Your browser does not support the video tag.</video></center>';
+      '<center><video width="97%" height="95%" controls><source src="' +
+      videoUrl +
+      '" type="video/webm">Your browser does not support the video tag.</video></center>';
     videoContainer.style.position = "fixed";
     videoContainer.style.zIndex = "10000";
     videoContainer.style.top = "0px";
@@ -129,7 +127,7 @@ function ProcessPage() {
     parames.forEach((element) => {
       params += element.key + " " + element.value + " ,";
     });
-    params[params.length - 1] = "";
+    params = params.substring(0, params.length - 1);
 
     const data = {
       url: url,
@@ -168,7 +166,7 @@ function ProcessPage() {
     formdata.append("runId", result.runId);
 
     var requestOptions = {
-      method: "GET",
+      method: "POST",
       body: formdata,
       redirect: "follow",
     };
@@ -179,7 +177,7 @@ function ProcessPage() {
     )
       .then((response) => response.json())
       .then((result) => {
-        if (result.status == 1) {
+        if (result.status === 1) {
           setVideUrl(result.video);
           clearInterval(intervalId);
         }
@@ -204,7 +202,6 @@ function ProcessPage() {
           const data = await token.json();
           setToken(data.token);
           handleOpenPopup();
-
           getInfo();
         })
         .catch((error) => {
@@ -216,7 +213,7 @@ function ProcessPage() {
   };
 
   return (
-    <div className="h-screen w-full bg-gray-600">
+    <div className="w-full bg-gray-600">
       <header className="flex justify-center items-center bg-gray-900 py-4 px-4 md:px-8 lg:px-12">
         <button
           onClick={handleBack}
@@ -227,7 +224,7 @@ function ProcessPage() {
         <h1 className="text-3xl mx-8 font-bold text-white flex-grow">
           Test Definition
         </h1>
-      </header>{" "}
+      </header>
       {showPopup ? <PopupComponent onClose={handleClosePopup} /> : <></>}
       <div className="flex flex-col items-center justify-center flex-grow">
         <form

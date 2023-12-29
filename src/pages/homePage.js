@@ -1,4 +1,3 @@
-import React from "react";
 import Header from "../components/homepage/header.js";
 import RequestDemoForm from "../components/forms/requestDemo.js";
 import About from "../components/homepage/about.js";

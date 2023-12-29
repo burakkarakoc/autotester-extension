@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DirectingPopup from "../directingLoginPopup";
 
-function StartButton() {
-  let navigate = useNavigate();
-
-  const handleStartClick = () => {
-    navigate("/process");
-  };
-
+function StartButton({ handleStartClick }) {
   return (
     <button
       onClick={handleStartClick}
