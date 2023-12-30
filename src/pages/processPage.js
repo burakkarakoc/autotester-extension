@@ -46,9 +46,9 @@ function ProcessPage() {
     setIsChecked(e.target.checked);
   };
 
-  const handleBack = () => {
-    navigate("/");
-  };
+  // const handleBack = () => {
+  //   navigate("/");
+  // };
 
   const handleAssertionTextChange = (e) => {
     setAssertionText(e.target.value);
@@ -213,20 +213,21 @@ function ProcessPage() {
   };
 
   return (
-    <div className="w-full bg-gray-600">
-      <header className="flex justify-center items-center bg-gray-900 py-4 px-4 md:px-8 lg:px-12">
-        <button
+    <div className="flex flex-col justify-center items-center w-full bg-gray-900 py-4 px-4 md:px-8 lg:px-12">
+      <header className="">
+        {/* bg-gray-900 py-4 px-4 md:px-8 lg:px-12 */}
+        {/* <button
           onClick={handleBack}
           className="text-white bg-indigo-600 hover:bg-indigo-700 font-bold py-2 px-4 rounded mr-4"
         >
           &#8592;
-        </button>
+        </button> */}
         <h1 className="text-3xl mx-8 font-bold text-white flex-grow">
           Test Definition
         </h1>
       </header>
       {showPopup ? <PopupComponent onClose={handleClosePopup} /> : <></>}
-      <div className="flex flex-col items-center justify-center flex-grow">
+      <div className="flex flex-col items-center justify-center flex-grow mt-6">
         <form
           onSubmit={handleSubmit}
           className="bg-gray-700 p-6 rounded-lg shadow-md w-full max-w-lg"

@@ -1,48 +1,89 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StartButton from "../buttons/startButton";
 import DirectingPopup from "../directingLoginPopup";
 
-function Header() {
+function Header({ token, setToken }) {
   let navigate = useNavigate();
   const [popup, setPopup] = useState(false);
+  const [valid, setValid] = useState(null);
 
-  const isAuthenticated = () => {
-    return new Promise((resolve, reject) => {
+  const getToken = () => {
+    if (!token) {
       /* eslint-disable no-undef */
-      chrome.storage.local.get("custom_token", function (result) {
-        if (result.custom_token) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const activeTabId = tabs[0].id;
+        const activeTabUrl = tabs[0].url;
+        chrome.scripting.executeScript(
+          {
+            target: { tabId: activeTabId },
+            function: () => {
+              return localStorage.getItem("user_token");
+            },
+          },
+          (results) => {
+            if (results && results[0]) {
+              setToken(results[0].result);
+              console.log("User token: " + results[0].result);
+              setToken(results[0].result);
+
+              var requestOptions = {
+                method: "GET",
+                redirect: "follow",
+              };
+
+              fetch(
+                "http://127.0.0.1:105/health?token=" + results[0].result,
+                requestOptions
+              )
+                .then((response) => response.json())
+                .then((result) => {
+                  console.log(result);
+                  if (result.message === "OK") {
+                    navigate("/process");
+                  } else {
+                    setPopup(true);
+                    /* eslint-disable no-undef */
+                    chrome.tabs.query(
+                      { active: true, currentWindow: true },
+                      (tabs) => {
+                        const activeTabId = tabs[0].id;
+                        chrome.tabs.update(activeTabId, {
+                          url: "http://localhost:5173/auth/sign-in",
+                        });
+                      }
+                    );
+                    setPopup(false);
+                  }
+                })
+                .catch((error) => console.log("error", error));
+            }
+          }
+        );
       });
-    });
+    }
   };
 
-  const handleStartClick = async () => {
-    isAuthenticated().then((isAuth) => {
-      if (isAuth) {
-        console.log("User is authenticated");
-        navigate("/process");
-      } else {
-        console.log("User is not authenticated");
-        setPopup(true);
-        const myTimeout = setTimeout(openLogin, 1000);
-      }
-    });
+  // useEffect(() => {
+  //   if (valid) {
+  //     navigate("/process");
+  //   }
+  // }, [valid]);
+
+  const handleStartClick = () => {
+    getToken();
   };
 
-  const openLogin = () => {
-    /* eslint-disable no-undef */
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const activeTabId = tabs[0].id;
-      chrome.tabs.update(activeTabId, {
-        url: "http://localhost:5173/auth/sign-in",
-      });
-    });
-    setPopup(false);
-  };
+  // const openLogin = () => {
+  //   /* eslint-disable no-undef */
+  //   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  //     const activeTabId = tabs[0].id;
+  //     chrome.tabs.update(activeTabId, {
+  //       url: "http://localhost:5173/auth/sign-in",
+  //     });
+  //   });
+  //   setPopup(false);
+  // };
 
   return (
     <>
@@ -56,5 +97,4 @@ function Header() {
     </>
   );
 }
-
 export default Header;
