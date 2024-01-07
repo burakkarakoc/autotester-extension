@@ -21,7 +21,7 @@ function ProcessPage() {
     setShowPopup(false);
   };
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleScenarioChange = (e) => {
     setScenario(e.target.value);
@@ -135,6 +135,7 @@ function ProcessPage() {
       parameters: params,
       body: body,
       assertion: assertion,
+      auth_necessaru: false,
     };
 
     fetch(`http://127.0.0.1:105/controller/start?token=${token}`, {
